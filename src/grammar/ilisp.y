@@ -12,16 +12,17 @@
 
 %%
 
-program:		/* empty */
-		|		s-expr program
+program
+		:		s_expr program
 		;
-atom: 			INTEGER
+atom
+        :		INTEGER
 		|		FLOAT
 				;
 
-s-expr:			atom
-		|		LPAREN NATIVE s-expr RPAREN
-		|		LPAREN NATIVE s-expr s-expr RPAREN
+s_expr
+		:		LPAREN NATIVE atom RPAREN
+		|		LPAREN NATIVE atom atom RPAREN
 				;
 
 %%

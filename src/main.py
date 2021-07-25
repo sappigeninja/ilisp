@@ -1,22 +1,23 @@
 #!/usr/bin/env python3.9
 
-# Packages
-import bison
-
-# Tell python to search for modules in subdirs
-import os
-import sys
-for entry in os.listdir():
-    if os.path.isdir(entry):
-        sys.path.insert(0, entry)
-
 # Internal modules
-import ilisp
+import parser
 
 def main():
-    print("Hello World!")
-    parser = ilisp.Parser()
-    parser.run()
+    #open text file in read mode
+    file = open("../test/main.il", "r")
+
+    #read whole file to a string
+    data = file.read()
+
+    parser.g_lexer.input(data)
+
+    # Tokenize
+    while True:
+        tok = parser.g_lexer.token()
+        if not tok:
+            break      # No more input
+        print(tok)
 
 if __name__ == "__main__":
     main()
