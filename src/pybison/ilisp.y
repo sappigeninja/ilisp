@@ -1,17 +1,27 @@
 %{
-
+#include "lex.yy.c"
 %}
 
 %token IDENTIFIER
-%token NUMBER
-%token OP
-%token LPAREN RPAREN					 
+%token INTEGER FLOAT 
 
-%start translation_unit
+%token LPAREN RPAREN
+%token NATIVE FUNC
+
+%start program
+
 %%
 
-s_expr:
-		|		LPAREN OP NUMBER RPAREN
-		|		RPAREN OP s_expr RPAREN
+program:		/* empty */
+		|		s-expr program
+		;
+atom: 			INTEGER
+		|		FLOAT
+				;
+
+s-expr:			atom
+		|		LPAREN NATIVE s-expr RPAREN
+		|		LPAREN NATIVE s-expr s-expr RPAREN
+				;
 
 %%

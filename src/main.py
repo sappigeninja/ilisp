@@ -11,7 +11,12 @@ for entry in os.listdir():
         sys.path.insert(0, entry)
 
 # Internal modules
-#import 
+import ilisp
+
+def main():
+    print("Hello World!")
+    parser = ilisp.Parser()
+    parser.run()
 
 if __name__ == "__main__":
-    print("Hello World!")
+    main()
