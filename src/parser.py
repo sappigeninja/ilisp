@@ -3,6 +3,7 @@
 from lexer import tokens
 import ply.yacc as yacc
 
+# Important start at the statement not the empty
 start = 'statement'
 
 def p_empty(p):
@@ -16,6 +17,7 @@ def p_statement_empty(p):
 def p_statement_sexpr(p):
     'statement : sexpr'
     p[0] = p[1]
+    print("Statement: ", p[0])
     pass
 
 # Sexpression grammars:
@@ -26,6 +28,10 @@ def p_sexpr_seq(p):
 
 # TODO: Implement functions
 def p_sexpr_function(p):
+    'sexpr : LPAREN IDENTIFIER RPAREN'
+    pass
+
+def p_sexpr_function_args(p):
     'sexpr : LPAREN IDENTIFIER sexpr RPAREN'
     pass
 
