@@ -1,7 +1,8 @@
 #!/usr/bin/env python3.9
 
 # Internal modules
-import parser
+import lexer as l
+import parser as p
 
 def main():
     #open text file in read mode
@@ -10,14 +11,24 @@ def main():
     #read whole file to a string
     data = file.read()
 
-    parser.g_lexer.input(data)
+    l.g_lexer.input(data)
 
     # Tokenize
     while True:
-        tok = parser.g_lexer.token()
+        tok = l.g_lexer.token()
         if not tok:
             break      # No more input
         print(tok)
+
+    while True:
+        try:
+            s = input('calc > ')
+        except EOFError:
+            break
+        parse = p.g_parser.parse(s)
+        print(parse)
+
+    pass # End of main
 
 if __name__ == "__main__":
     main()

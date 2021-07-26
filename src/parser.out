@@ -1,0 +1,314 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    IF
+    QUOTE
+    STRING_END
+    STRING_START
+
+Grammar
+
+Rule 0     S' -> statement
+Rule 1     empty -> <empty>
+Rule 2     statement -> empty
+Rule 3     statement -> sexpr
+Rule 4     sexpr -> seq
+Rule 5     sexpr -> LPAREN IDENTIFIER sexpr RPAREN
+Rule 6     sexpr -> LPAREN ADD sexpr RPAREN
+Rule 7     sexpr -> LPAREN SUB sexpr RPAREN
+Rule 8     seq -> atom
+Rule 9     seq -> atom seq
+Rule 10    atom -> INTEGER
+Rule 11    atom -> FLOAT
+Rule 12    atom -> STRING
+Rule 13    atom -> IDENTIFIER
+
+Terminals, with rules where they appear
+
+ADD                  : 6
+FLOAT                : 11
+IDENTIFIER           : 5 13
+IF                   : 
+INTEGER              : 10
+LPAREN               : 5 6 7
+QUOTE                : 
+RPAREN               : 5 6 7
+STRING               : 12
+STRING_END           : 
+STRING_START         : 
+SUB                  : 7
+error                : 
+
+Nonterminals, with rules where they appear
+
+atom                 : 8 9
+empty                : 2
+seq                  : 4 9
+sexpr                : 3 5 6 7
+statement            : 0
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . statement
+    (2) statement -> . empty
+    (3) statement -> . sexpr
+    (1) empty -> .
+    (4) sexpr -> . seq
+    (5) sexpr -> . LPAREN IDENTIFIER sexpr RPAREN
+    (6) sexpr -> . LPAREN ADD sexpr RPAREN
+    (7) sexpr -> . LPAREN SUB sexpr RPAREN
+    (8) seq -> . atom
+    (9) seq -> . atom seq
+    (10) atom -> . INTEGER
+    (11) atom -> . FLOAT
+    (12) atom -> . STRING
+    (13) atom -> . IDENTIFIER
+
+    $end            reduce using rule 1 (empty -> .)
+    LPAREN          shift and go to state 5
+    INTEGER         shift and go to state 8
+    FLOAT           shift and go to state 9
+    STRING          shift and go to state 10
+    IDENTIFIER      shift and go to state 6
+
+    statement                      shift and go to state 1
+    empty                          shift and go to state 2
+    sexpr                          shift and go to state 3
+    seq                            shift and go to state 4
+    atom                           shift and go to state 7
+
+state 1
+
+    (0) S' -> statement .
+
+
+
+state 2
+
+    (2) statement -> empty .
+
+    $end            reduce using rule 2 (statement -> empty .)
+
+
+state 3
+
+    (3) statement -> sexpr .
+
+    $end            reduce using rule 3 (statement -> sexpr .)
+
+
+state 4
+
+    (4) sexpr -> seq .
+
+    $end            reduce using rule 4 (sexpr -> seq .)
+    RPAREN          reduce using rule 4 (sexpr -> seq .)
+
+
+state 5
+
+    (5) sexpr -> LPAREN . IDENTIFIER sexpr RPAREN
+    (6) sexpr -> LPAREN . ADD sexpr RPAREN
+    (7) sexpr -> LPAREN . SUB sexpr RPAREN
+
+    IDENTIFIER      shift and go to state 11
+    ADD             shift and go to state 12
+    SUB             shift and go to state 13
+
+
+state 6
+
+    (13) atom -> IDENTIFIER .
+
+    INTEGER         reduce using rule 13 (atom -> IDENTIFIER .)
+    FLOAT           reduce using rule 13 (atom -> IDENTIFIER .)
+    STRING          reduce using rule 13 (atom -> IDENTIFIER .)
+    IDENTIFIER      reduce using rule 13 (atom -> IDENTIFIER .)
+    $end            reduce using rule 13 (atom -> IDENTIFIER .)
+    RPAREN          reduce using rule 13 (atom -> IDENTIFIER .)
+
+
+state 7
+
+    (8) seq -> atom .
+    (9) seq -> atom . seq
+    (8) seq -> . atom
+    (9) seq -> . atom seq
+    (10) atom -> . INTEGER
+    (11) atom -> . FLOAT
+    (12) atom -> . STRING
+    (13) atom -> . IDENTIFIER
+
+    $end            reduce using rule 8 (seq -> atom .)
+    RPAREN          reduce using rule 8 (seq -> atom .)
+    INTEGER         shift and go to state 8
+    FLOAT           shift and go to state 9
+    STRING          shift and go to state 10
+    IDENTIFIER      shift and go to state 6
+
+    atom                           shift and go to state 7
+    seq                            shift and go to state 14
+
+state 8
+
+    (10) atom -> INTEGER .
+
+    INTEGER         reduce using rule 10 (atom -> INTEGER .)
+    FLOAT           reduce using rule 10 (atom -> INTEGER .)
+    STRING          reduce using rule 10 (atom -> INTEGER .)
+    IDENTIFIER      reduce using rule 10 (atom -> INTEGER .)
+    $end            reduce using rule 10 (atom -> INTEGER .)
+    RPAREN          reduce using rule 10 (atom -> INTEGER .)
+
+
+state 9
+
+    (11) atom -> FLOAT .
+
+    INTEGER         reduce using rule 11 (atom -> FLOAT .)
+    FLOAT           reduce using rule 11 (atom -> FLOAT .)
+    STRING          reduce using rule 11 (atom -> FLOAT .)
+    IDENTIFIER      reduce using rule 11 (atom -> FLOAT .)
+    $end            reduce using rule 11 (atom -> FLOAT .)
+    RPAREN          reduce using rule 11 (atom -> FLOAT .)
+
+
+state 10
+
+    (12) atom -> STRING .
+
+    INTEGER         reduce using rule 12 (atom -> STRING .)
+    FLOAT           reduce using rule 12 (atom -> STRING .)
+    STRING          reduce using rule 12 (atom -> STRING .)
+    IDENTIFIER      reduce using rule 12 (atom -> STRING .)
+    $end            reduce using rule 12 (atom -> STRING .)
+    RPAREN          reduce using rule 12 (atom -> STRING .)
+
+
+state 11
+
+    (5) sexpr -> LPAREN IDENTIFIER . sexpr RPAREN
+    (4) sexpr -> . seq
+    (5) sexpr -> . LPAREN IDENTIFIER sexpr RPAREN
+    (6) sexpr -> . LPAREN ADD sexpr RPAREN
+    (7) sexpr -> . LPAREN SUB sexpr RPAREN
+    (8) seq -> . atom
+    (9) seq -> . atom seq
+    (10) atom -> . INTEGER
+    (11) atom -> . FLOAT
+    (12) atom -> . STRING
+    (13) atom -> . IDENTIFIER
+
+    LPAREN          shift and go to state 5
+    INTEGER         shift and go to state 8
+    FLOAT           shift and go to state 9
+    STRING          shift and go to state 10
+    IDENTIFIER      shift and go to state 6
+
+    sexpr                          shift and go to state 15
+    seq                            shift and go to state 4
+    atom                           shift and go to state 7
+
+state 12
+
+    (6) sexpr -> LPAREN ADD . sexpr RPAREN
+    (4) sexpr -> . seq
+    (5) sexpr -> . LPAREN IDENTIFIER sexpr RPAREN
+    (6) sexpr -> . LPAREN ADD sexpr RPAREN
+    (7) sexpr -> . LPAREN SUB sexpr RPAREN
+    (8) seq -> . atom
+    (9) seq -> . atom seq
+    (10) atom -> . INTEGER
+    (11) atom -> . FLOAT
+    (12) atom -> . STRING
+    (13) atom -> . IDENTIFIER
+
+    LPAREN          shift and go to state 5
+    INTEGER         shift and go to state 8
+    FLOAT           shift and go to state 9
+    STRING          shift and go to state 10
+    IDENTIFIER      shift and go to state 6
+
+    sexpr                          shift and go to state 16
+    seq                            shift and go to state 4
+    atom                           shift and go to state 7
+
+state 13
+
+    (7) sexpr -> LPAREN SUB . sexpr RPAREN
+    (4) sexpr -> . seq
+    (5) sexpr -> . LPAREN IDENTIFIER sexpr RPAREN
+    (6) sexpr -> . LPAREN ADD sexpr RPAREN
+    (7) sexpr -> . LPAREN SUB sexpr RPAREN
+    (8) seq -> . atom
+    (9) seq -> . atom seq
+    (10) atom -> . INTEGER
+    (11) atom -> . FLOAT
+    (12) atom -> . STRING
+    (13) atom -> . IDENTIFIER
+
+    LPAREN          shift and go to state 5
+    INTEGER         shift and go to state 8
+    FLOAT           shift and go to state 9
+    STRING          shift and go to state 10
+    IDENTIFIER      shift and go to state 6
+
+    sexpr                          shift and go to state 17
+    seq                            shift and go to state 4
+    atom                           shift and go to state 7
+
+state 14
+
+    (9) seq -> atom seq .
+
+    $end            reduce using rule 9 (seq -> atom seq .)
+    RPAREN          reduce using rule 9 (seq -> atom seq .)
+
+
+state 15
+
+    (5) sexpr -> LPAREN IDENTIFIER sexpr . RPAREN
+
+    RPAREN          shift and go to state 18
+
+
+state 16
+
+    (6) sexpr -> LPAREN ADD sexpr . RPAREN
+
+    RPAREN          shift and go to state 19
+
+
+state 17
+
+    (7) sexpr -> LPAREN SUB sexpr . RPAREN
+
+    RPAREN          shift and go to state 20
+
+
+state 18
+
+    (5) sexpr -> LPAREN IDENTIFIER sexpr RPAREN .
+
+    $end            reduce using rule 5 (sexpr -> LPAREN IDENTIFIER sexpr RPAREN .)
+    RPAREN          reduce using rule 5 (sexpr -> LPAREN IDENTIFIER sexpr RPAREN .)
+
+
+state 19
+
+    (6) sexpr -> LPAREN ADD sexpr RPAREN .
+
+    $end            reduce using rule 6 (sexpr -> LPAREN ADD sexpr RPAREN .)
+    RPAREN          reduce using rule 6 (sexpr -> LPAREN ADD sexpr RPAREN .)
+
+
+state 20
+
+    (7) sexpr -> LPAREN SUB sexpr RPAREN .
+
+    $end            reduce using rule 7 (sexpr -> LPAREN SUB sexpr RPAREN .)
+    RPAREN          reduce using rule 7 (sexpr -> LPAREN SUB sexpr RPAREN .)
+

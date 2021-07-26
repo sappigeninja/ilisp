@@ -1,124 +1,99 @@
 #!/usr/bin/env python3.9
 
-# Import ply 
-import ply.lex as lex
+from lexer import tokens
 import ply.yacc as yacc
 
-# TODO: Wrap the lexer and parser in a class
+start = 'statement'
 
-# Define states for more complex parsing
-states = (
-   ('sexpr', 'inclusive'),
-   ('string', 'exclusive')
-)
-
-# Reserved keywords
-reserved = {
-    'add' : 'ADD',
-    'sub' : 'SUB',
-    'if' : 'IF'
-}
-
-# Define the necessary tokens
-tokens = ['IDENTIFIER',
-          'INTEGER', 'FLOAT', 'STRING',
-          'STRING_START', 'STRING_END',
-          'LPAREN', 'RPAREN',
-          ] + list(reserved.values())
-
-# Length of string has priority
-# Then order of declaration
-t_sexpr_ADD = r'\+'
-t_sexpr_SUB = r'\-'
-
-# Functions have priority over rawstrings
-# Order of declaration has priority
-def t_INITIAL_IDENTIFIER(t):
-   r'[a-zA-Z][a-zA-Z0-9_-]*'
-   t.type = reserved.get(t.value)
-
-   if t.type is None:
-       t.type = "IDENTIFIER"
-
-   return t
-
-def t_FLOAT(t):
-    r'\d+\.\d+'
-    t.value = float(t.value)
-    return t
-
-def t_INTEGER(t):
-    r'\d+'
-    t.value = int(t.value)
-    return t
-
-# String lexing:
-def t_string_STRING(t):
-   r'[^\"]+'
-   return t
-
-def t_ANY_STRING_START(t):
-   r'\"'
-   t.lexer.push_state('string')
-   pass
-
-def t_string_STRING_END(t):
-   r'\"'
-   t.lexer.pop_state()
-   pass
-
-# S-expression lexing:
-def t_LPAREN(t):
-   r'\('
-   t.lexer.push_state('sexpr')
-   return t
-
-def t_sexpr_RPAREN(t):
-   r'\)'
-   t.lexer.pop_state()
-   return t
-
-# Filtering:
-# Filter out and track newlines
-def t_ANY_newline(t):
-    r'\n+'
-    t.lexer.lineno += len(t.value)
+def p_empty(p):
+    'empty :'
     pass
 
-# Discard comments
-def t_comment(t):
-    r';[^\n]*'
+def p_statement_empty(p):
+    'statement : empty'
     pass
 
-# Remove spaces in every state
-def t_ANY_space(t):
-   r'\s'
-   pass
-
-# Error handling rule
-def t_error(t):
-    print("Illegal character '%s'" % t.value[0])
-    t.lexer.skip(1)
+def p_statement_sexpr(p):
+    'statement : sexpr'
+    p[0] = p[1]
     pass
 
-def t_sexpr_error(t):
-   pass
+# Sexpression grammars:
+def p_sexpr_seq(p):
+    'sexpr : seq'
+    p[0] = p[1]
+    pass
 
-def t_string_error(t):
-   pass
+# TODO: Implement functions
+def p_sexpr_function(p):
+    'sexpr : LPAREN IDENTIFIER sexpr RPAREN'
+    pass
 
-# EOF handling:
-def t_INITIAL_eof(t):
-   print("EOF")
-   pass
+def p_sexpr_addition(p):
+    'sexpr : LPAREN ADD sexpr RPAREN'
+    p[0] = p[3][0]
+    for atom in p[3][1:]:
+        p[0] += atom
 
-def t_sexpr_eof(t):
-   print("EOF was reached and there is no closing parenthesis")
-   pass
+    pass
 
-def t_string_eof(t):
-   print("EOF was reached and there is no closing \"")
-   pass
+def p_sexpr_subtraction(p):
+    'sexpr : LPAREN SUB sexpr RPAREN'
+    p[0] = p[3][0]
+    for atom in p[3][1:]:
+        p[0] -= atom
 
-# TODO: Global for now
-g_lexer = lex.lex()
+# Sequence grammars:
+def p_seq(p):
+    'seq : atom'
+    p[0] = p[1]
+    pass
+
+def p_seq_recursive(p):
+    'seq : atom seq'
+    # Store the sequence properly as a list
+    p[0] = [p[1]]
+    if type(p[2]) is list:
+        for atom in p[2]:
+            p[0].append(atom)
+    else:
+        p[0].append(p[2])
+    pass
+
+# Atom grammars:
+def p_atom_integer(p):
+    'atom : INTEGER'
+    p[0] = p[1]
+
+    print("INT: ", p[1])
+    pass
+
+def p_atom_float(p):
+    'atom : FLOAT'
+    p[0] = p[1]
+
+    print("FLOAT: ", p[1])
+    pass
+
+# TODO: Add lists later
+
+def p_atom_STRING(p):
+    'atom : STRING'
+    p[0] = p[1]
+
+    print("STR: ", p[1])
+    pass
+
+def p_atom_identifier(p):
+    'atom : IDENTIFIER'
+    p[0] = p[1]
+
+    print("ID: ", p[1])
+    pass
+
+# Error handling
+def p_error(p):
+    print(f"Syntax error! {p.value!r}")
+    pass
+
+g_parser = yacc.yacc()
