@@ -7,6 +7,5 @@
 (add 70 80)
 (id-test 40 32)
 
-"Test"
-
 (append "This is a string")
+(add 90 100)

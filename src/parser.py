@@ -99,7 +99,12 @@ def p_atom_identifier(p):
 
 # Error handling
 def p_error(p):
-    print(f"Syntax error! {p.value!r}")
+    print("Error: ", end="")
+    if p is None:
+        print("Incomplete expression EOF reached!")
+    else:
+        print(f"Syntax error! {p.value!r}")
+        print(f"Line no: {p.lineno}")
     pass
 
 g_parser = yacc.yacc()
