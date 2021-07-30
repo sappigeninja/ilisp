@@ -13,20 +13,26 @@ states = (
 
 # Reserved keywords
 reserved = {
-    'add' : 'ADD',
-    'sub' : 'SUB',
-    'if' : 'IF'
+   'add' : 'ADD',
+   'sub' : 'SUB',
+   'mul' : 'MUL',
+   'div' : "DIV",
+   'if' : 'IF',
+   'setq' : 'SETQ',
+   'print' : 'PRINT'
 }
 
 # Define the necessary tokens
 tokens = ['IDENTIFIER',
           'INTEGER', 'FLOAT', 'QUOTE', 'STRING',
           'STRING_START', 'STRING_END',
-          'LPAREN', 'RPAREN',
+          'LPAREN', 'RPAREN'
           ] + list(reserved.values())
 
 # Length of string has priority
 # Then order of declaration
+t_INITIAL_IDENTIFIER  = r'[a-zA-Z][a-zA-Z0-9_-]*'
+
 t_QUOTE = r'\''
 
 # Natives and literals
@@ -35,7 +41,7 @@ t_sexpr_SUB = r'\-'
 
 # Functions have priority over rawstrings
 # Order of declaration has priority
-def t_INITIAL_IDENTIFIER(t):
+def t_sexpr_IDENTIFIER(t):
    r'[a-zA-Z][a-zA-Z0-9_-]*'
    type = reserved.get(t.value)
 
@@ -122,5 +128,6 @@ def t_string_eof(t):
    print("EOF was reached and there is no closing \"")
    pass
 
-# TODO: Global for now
-g_lexer = lex.lex()
+# Return the above defined lexer
+def get_lexer():
+   return lex.lex()
