@@ -33,6 +33,7 @@ class Sexpr:
         self._seq= t_seq
         pass
 
+# Arithmetic 
 class Addition(Sexpr):
     def eval(self):
         i = self._builder.add(self._seq[0].eval(), self._seq[1]. eval())
@@ -42,11 +43,26 @@ class Addition(Sexpr):
 
 class Subtraction(Sexpr):
     def eval(self):
-        i = self._builder.add(self._seq[0].eval(), self._seq[1]. eval())
+        i = self._builder.sub(self._seq[0].eval(), self._seq[1]. eval())
         for atom in self._seq[2:]:
             i = self._builder.sub(i, atom.eval())
         return i
 
+class Multiplication(Sexpr):
+    def eval(self):
+        i = self._builder.mul(self._seq[0].eval(), self._seq[1]. eval())
+        for atom in self._seq[2:]:
+            i = self._builder.mul(i, atom.eval())
+        return i
+
+class Subtraction(Sexpr):
+    def eval(self):
+        i = self._builder.sdiv(self._seq[0].eval(), self._seq[1]. eval())
+        for atom in self._seq[2:]:
+            i = self._builder.sdiv(i, atom.eval())
+        return i
+
+# IO:
 class Print():
     def __init__(self, builder, module, printf, value):
         self.builder = builder

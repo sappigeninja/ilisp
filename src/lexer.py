@@ -16,7 +16,8 @@ reserved = {
    'add' : 'ADD',
    'sub' : 'SUB',
    'mul' : 'MUL',
-   'div' : "DIV",
+   'div' : 'DIV',
+
    'if' : 'IF',
    'setq' : 'SETQ',
    'print' : 'PRINT'
@@ -38,6 +39,8 @@ t_QUOTE = r'\''
 # Natives and literals
 t_sexpr_ADD = r'\+'
 t_sexpr_SUB = r'\-'
+t_sexpr_MUL = r'\*'
+t_sexpr_DIV = r'\/'
 
 # Functions have priority over rawstrings
 # Order of declaration has priority

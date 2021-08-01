@@ -1,1 +1,1 @@
-(print (add 35 35))
+(print (add (add 10 10) 10))

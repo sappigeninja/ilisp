@@ -1,2 +1,3 @@
 src/output.ll
 src/output.s
+src/parsetab.py

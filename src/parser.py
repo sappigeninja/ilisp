@@ -28,42 +28,54 @@ def p_statement_sexpr(p):
     pass
 
 # Sexpression grammars:
-def p_sexpr_seq(p):
-    'sexpr : seq'
-    p[0] = p[1]
-    pass
-
 def p_sexpr_function(p):
     'sexpr : LPAREN IDENTIFIER RPAREN'
     pass
 
 def p_sexpr_function_args(p):
-    'sexpr : LPAREN IDENTIFIER sexpr RPAREN'
+    'sexpr : LPAREN IDENTIFIER seq RPAREN'
     pass
 
 def p_sexpr_addition(p):
-    'sexpr : LPAREN ADD sexpr RPAREN'
+    'sexpr : LPAREN ADD seq RPAREN'
     p[0] = ast.Addition(g_builder, g_module, p[3])
     pass
 
 def p_sexpr_subtraction(p):
-    'sexpr : LPAREN SUB sexpr RPAREN'
+    'sexpr : LPAREN SUB seq RPAREN'
     p[0] = ast.Subtraction(g_builder, g_module, p[3])
     pass
 
+def p_sexpr_multiplication(p):
+    'sexpr : LPAREN MUL seq RPAREN'
+    p[0] = ast.Multiplication(g_builder, g_module, p[3])
+    pass
+
+def p_sexpr_division(p):
+    'sexpr : LPAREN DIV seq RPAREN'
+    p[0] = ast.Division(g_builder, g_module, p[3])
+    pass
 def p_sexpr_print(p):
-    'sexpr : LPAREN PRINT sexpr RPAREN'
+    'sexpr : LPAREN PRINT seq RPAREN'
     p[0] = ast.Print(g_builder, g_module, g_printf, p[3])
     pass
 
 # Sequence grammars:
+# Also take care of empty sequences
+def p_seq_empty(p):
+    'seq : empty'
+    p[0] = None
+    pass
+
 def p_seq(p):
-    'seq : atom'
+    '''seq : atom
+           | sexpr'''
     p[0] = p[1]
     pass
 
 def p_seq_recursive(p):
-    'seq : atom seq'
+    '''seq : atom seq
+           | sexpr seq'''
     # Store the sequence properly as a list
     p[0] = [p[1]]
     if type(p[2]) is list:

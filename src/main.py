@@ -13,6 +13,7 @@ def main():
     p.g_builder = codegen.builder
     p.g_printf = codegen.printf
 
+    # Create the lexer and parser
     lexer = l.get_lexer()
     parser = p.get_parser()
 
@@ -21,7 +22,10 @@ def main():
     for line in file:
         parse = parser.parse(line)
         print(parse)
-        
+
+    # Create an LLVM IR code file
+    # generate assembly with $ llc output.ll
+    # Run it with $ lli output.ll
     codegen.create_ir()
     codegen.save_ir("output.ll")
     pass # End of main
