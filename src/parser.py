@@ -55,6 +55,19 @@ def p_sexpr_division(p):
     'sexpr : LPAREN DIV seq RPAREN'
     p[0] = ast.Division(g_builder, g_module, p[3])
     pass
+
+# TODO: If statements should also have atoms
+def p_sexpr_if(p):
+    'sexpr : LPAREN IF cond sexpr RPAREN'
+    p[0] = ast.If(g_builder, g_module, p[3], p[4])
+    pass
+
+def p_sexpr_if_else(p):
+    'sexpr : LPAREN IF cond sexpr sexpr RPAREN'
+    p[0] = ast.If(g_builder, g_module, p[3], p[4], p[5])
+    pass
+
+# Printing:
 def p_sexpr_print(p):
     'sexpr : LPAREN PRINT seq RPAREN'
     p[0] = ast.Print(g_builder, g_module, g_printf, p[3])

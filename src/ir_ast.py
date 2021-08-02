@@ -62,6 +62,24 @@ class Subtraction(Sexpr):
             i = self._builder.sdiv(i, atom.eval())
         return i
 
+class If:
+    def __init__(self, t_builder, t_module, t_cond, t_sexpr1, t_sexpr2):
+        self._builder = t_builder
+        self._module = t_module
+
+        self._cond = t_cond
+        self._sexpr1 = t_sexpr1
+        self._sexpr2 = t_sexpr2
+        pass
+
+    def eval(self):
+        i = None
+        if t_sexpr2 is not None:
+            i = ir.if_then(t_cond.eval())
+        else:
+            i = ir.if_else(t_cond.eval())
+        return i
+    
 # IO:
 class Print():
     def __init__(self, builder, module, printf, value):
