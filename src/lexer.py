@@ -19,6 +19,8 @@ reserved = {
    'div' : 'DIV',
 
    'if' : 'IF',
+   'eq' : 'EQ',
+
    'setq' : 'SETQ',
    'print' : 'PRINT'
 }

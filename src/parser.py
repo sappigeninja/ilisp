@@ -5,6 +5,7 @@ from lexer import tokens
 import ply.yacc as yacc
 import ir_ast as ast
 
+# TODO: Move this to ir_ast.py
 # These are assigned in main
 g_module = None
 g_builder = None
@@ -13,6 +14,7 @@ g_printf = None
 # Important start at the statement not the empty
 start = 'statement'
 
+# Base clauses:
 def p_empty(p):
     'empty :'
     pass
@@ -36,6 +38,8 @@ def p_sexpr_function_args(p):
     'sexpr : LPAREN IDENTIFIER seq RPAREN'
     pass
 
+
+## Arithmetic:
 def p_sexpr_addition(p):
     'sexpr : LPAREN ADD seq RPAREN'
     p[0] = ast.Addition(g_builder, g_module, p[3])
@@ -56,16 +60,24 @@ def p_sexpr_division(p):
     p[0] = ast.Division(g_builder, g_module, p[3])
     pass
 
-# TODO: If statements should also have atoms
+## If statements:
 def p_sexpr_if(p):
-    'sexpr : LPAREN IF cond sexpr RPAREN'
+    'sexpr : LPAREN IF conditional sexpr RPAREN'
     p[0] = ast.If(g_builder, g_module, p[3], p[4])
     pass
 
 def p_sexpr_if_else(p):
-    'sexpr : LPAREN IF cond sexpr sexpr RPAREN'
+    'sexpr : LPAREN IF conditional sexpr sexpr RPAREN'
     p[0] = ast.If(g_builder, g_module, p[3], p[4], p[5])
     pass
+
+
+# Conditional:
+def p_conditional_integer(p):
+    'conditional : INTEGER'
+    p[0] = ast.Conditional(g_builder, g_module, p[1])
+    pass
+
 
 # Printing:
 def p_sexpr_print(p):
@@ -73,12 +85,16 @@ def p_sexpr_print(p):
     p[0] = ast.Print(g_builder, g_module, g_printf, p[3])
     pass
 
+
 # Sequence grammars:
 # Also take care of empty sequences
-def p_seq_empty(p):
-    'seq : empty'
-    p[0] = None
-    pass
+
+# TODO: This rule appends None to the end of everything
+# This breaks the existing rules
+# def p_seq_empty(p):
+#     'seq : empty'
+#     p[0] = None
+#     pass
 
 def p_seq(p):
     '''seq : atom
@@ -96,7 +112,9 @@ def p_seq_recursive(p):
             p[0].append(atom)
     else:
         p[0].append(p[2])
+    print("Seq: ", p[0])
     pass
+
 
 # Atom grammars:
 def p_atom_integer(p):
@@ -129,7 +147,8 @@ def p_atom_identifier(p):
     print("ID: ", p[1])
     pass
 
-# Error handling
+
+# Error handling:
 def p_error(p):
     print("Error: ", end="")
     if p is None:

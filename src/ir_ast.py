@@ -1,7 +1,13 @@
 #!/usr/bin/python3.9
 
+import sys
+
 # Define the classes for constructing the AST here
 from llvmlite import ir 
+
+
+# Variable stack
+g_variables = {} 
 
 # TODO: Use Atom for error handling / checking
 class Atom:
@@ -13,9 +19,11 @@ class Atom:
         self._value = t_value
         pass
 
+    
     def get_type():
         return self._type
-        
+
+    
     def eval(self):
         i = None
         if self._type == "INTEGER":
@@ -24,6 +32,7 @@ class Atom:
             i = ir.Constant(ir.DoubleType(), float(self._value))
         return i
 
+    
 # Sexpr:
 class Sexpr:
     def __init__(self, t_builder, t_module, t_seq):
@@ -33,6 +42,7 @@ class Sexpr:
         self._seq= t_seq
         pass
 
+    
 # Arithmetic 
 class Addition(Sexpr):
     def eval(self):
@@ -41,6 +51,7 @@ class Addition(Sexpr):
             i = self._builder.add(i, atom.eval())
         return i
 
+    
 class Subtraction(Sexpr):
     def eval(self):
         i = self._builder.sub(self._seq[0].eval(), self._seq[1]. eval())
@@ -48,6 +59,7 @@ class Subtraction(Sexpr):
             i = self._builder.sub(i, atom.eval())
         return i
 
+    
 class Multiplication(Sexpr):
     def eval(self):
         i = self._builder.mul(self._seq[0].eval(), self._seq[1]. eval())
@@ -55,6 +67,7 @@ class Multiplication(Sexpr):
             i = self._builder.mul(i, atom.eval())
         return i
 
+    
 class Subtraction(Sexpr):
     def eval(self):
         i = self._builder.sdiv(self._seq[0].eval(), self._seq[1]. eval())
@@ -62,8 +75,9 @@ class Subtraction(Sexpr):
             i = self._builder.sdiv(i, atom.eval())
         return i
 
+    
 class If:
-    def __init__(self, t_builder, t_module, t_cond, t_sexpr1, t_sexpr2):
+    def __init__(self, t_builder, t_module, t_cond, t_sexpr1, t_sexpr2 = None):
         self._builder = t_builder
         self._module = t_module
 
@@ -72,14 +86,42 @@ class If:
         self._sexpr2 = t_sexpr2
         pass
 
+    
     def eval(self):
         i = None
-        if t_sexpr2 is not None:
-            i = ir.if_then(t_cond.eval())
+        if self._sexpr2 is None:
+            with self._builder.if_then(self._cond.eval()) as (then):
+                with then:
+                    i = self._sexpr1.eval()
         else:
-            i = ir.if_else(t_cond.eval())
+            with self._builder.if_else(self._cond.eval()) as (then, otherwise):
+                with then:
+                    i = self._sexpr1.eval()
+                with otherwise:
+                    i = self._sexpr2.eval()
         return i
+
+
+class Conditional:
+    def __init__(self, t_builder, t_module, t_seq, t_op = None):
+        self._builder = t_builder
+        self._module = t_module
+
+        self._seq = t_seq
+        self._op = t_op
+        pass
+
     
+    def eval(self):
+        i = None
+        if self._op is None:
+            if self._seq is not list:
+                i = ir.Constant(ir.IntType(1), int(self._seq))
+            else:
+                sys.exit("ERROR: No operator was given and a sequence was supplied.")
+        return i
+
+
 # IO:
 class Print():
     def __init__(self, builder, module, printf, value):
@@ -88,7 +130,9 @@ class Print():
         self.printf = printf
 
         self.value = value
+        pass
 
+        
     def eval(self):
         value = self.value.eval()
 
@@ -105,3 +149,4 @@ class Print():
 
         # Call Print Function
         self.builder.call(self.printf, [fmt_arg, value])
+        pass
