@@ -1,8 +1,8 @@
-# ilisp
-Improved LISP programming language.
-An effort to create a more modern and relevant LISP programming experience.
-Its written in python to quickly get a prototype working.
+# toy-lisp
+A lisp implementation written for fun.
+This is my attempt at creating a compiler.
 
 ## Dependencies
-It pybison so you will need flex and bison installed on youre system.
-You will also need the pybison library.
+You will need to have the following dependencies:
+* PLY
+* LLVM
