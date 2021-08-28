@@ -9,6 +9,7 @@ from llvmlite import ir
 # Variable stack
 g_variables = {} 
 
+
 # TODO: Use Atom for error handling / checking
 class Atom:
     def __init__(self, t_builder, t_module, t_type, t_value):
@@ -19,18 +20,22 @@ class Atom:
         self._value = t_value
         pass
 
-    
     def get_type():
         return self._type
 
-    
+    def get_value():
+        return self._value
+
     def eval(self):
-        i = None
+        instr = None
         if self._type == "INTEGER":
-            i = ir.Constant(ir.IntType(8), int(self._value))
+            instr = ir.Constant(ir.IntType(8), int(self._value))
         if self._type == "FLOAT":
-            i = ir.Constant(ir.DoubleType(), float(self._value))
-        return i
+            instr = ir.Constant(ir.DoubleType(), float(self._value))
+        if self._type == "IDENTIFIER":
+            print(g_variables)
+            instr = self._builder.load(g_variables[self._value], name=self._value)
+        return instr
 
     
 # Sexpr:
@@ -39,41 +44,67 @@ class Sexpr:
         self._builder = t_builder
         self._module = t_module
 
-        self._seq= t_seq
+        self._seq = t_seq
         pass
+
+    
+## Variables
+class Assignment:
+    def __init__(self, t_builder, t_module, t_name, t_value):
+        self._builder = t_builder
+        self._module = t_module
+
+        self._name = t_name
+        self._value = t_value
+        pass
+
+    def eval(self):
+        ptr = None
+        if self._name in g_variables: 
+            ptr = g_variables[self._name]
+        else:
+            ptr = self._builder.alloca(ir.IntType(8), size=1, name=self._name)
+
+            # TODO: Think this out
+            g_variables[self._name] = ptr
+
+        instr = self._value.eval()
+        self._builder.store(instr, ptr)
+
+        return instr
 
     
 # Arithmetic 
 class Addition(Sexpr):
     def eval(self):
-        i = self._builder.add(self._seq[0].eval(), self._seq[1]. eval())
+        instr = self._builder.add(self._seq[0].eval(), self._seq[1]. eval())
         for atom in self._seq[2:]:
-            i = self._builder.add(i, atom.eval())
-        return i
+            instr = self._builder.add(i, atom.eval())
+        return instr
 
     
 class Subtraction(Sexpr):
     def eval(self):
-        i = self._builder.sub(self._seq[0].eval(), self._seq[1]. eval())
+        instr = self._builder.sub(self._seq[0].eval(), self._seq[1]. eval())
         for atom in self._seq[2:]:
-            i = self._builder.sub(i, atom.eval())
-        return i
+            instr = self._builder.sub(i, atom.eval())
+        return instr
 
     
 class Multiplication(Sexpr):
     def eval(self):
-        i = self._builder.mul(self._seq[0].eval(), self._seq[1]. eval())
+        instr = self._builder.mul(self._seq[0].eval(), self._seq[1]. eval())
         for atom in self._seq[2:]:
-            i = self._builder.mul(i, atom.eval())
-        return i
+            instr = self._builder.mul(i, atom.eval())
+        return instr
 
     
 class Subtraction(Sexpr):
     def eval(self):
-        i = self._builder.sdiv(self._seq[0].eval(), self._seq[1]. eval())
+        instr = self._builder.sdiv(self._seq[0].eval(), self._seq[1]. eval())
         for atom in self._seq[2:]:
-            i = self._builder.sdiv(i, atom.eval())
-        return i
+            instr = self._builder.sdiv(i, atom.eval())
+        return instr
 
     
 class If:
@@ -88,18 +119,18 @@ class If:
 
     
     def eval(self):
-        i = None
+        instr = None
         if self._sexpr2 is None:
             with self._builder.if_then(self._cond.eval()) as (then):
                 with then:
-                    i = self._sexpr1.eval()
+                    instr = self._sexpr1.eval()
         else:
             with self._builder.if_else(self._cond.eval()) as (then, otherwise):
                 with then:
-                    i = self._sexpr1.eval()
+                    instr = self._sexpr1.eval()
                 with otherwise:
-                    i = self._sexpr2.eval()
-        return i
+                    instr = self._sexpr2.eval()
+        return instr
 
 
 class Conditional:
@@ -113,13 +144,13 @@ class Conditional:
 
     
     def eval(self):
-        i = None
+        instr = None
         if self._op is None:
             if self._seq is not list:
-                i = ir.Constant(ir.IntType(1), int(self._seq))
+                instr = ir.Constant(ir.IntType(1), int(self._seq))
             else:
                 sys.exit("ERROR: No operator was given and a sequence was supplied.")
-        return i
+        return instr
 
 
 # IO:

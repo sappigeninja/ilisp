@@ -39,6 +39,13 @@ def p_sexpr_function_args(p):
     pass
 
 
+## Assignment:
+def p_sexpr_setq(p):
+    'sexpr : LPAREN SETQ IDENTIFIER atom RPAREN'
+    p[0] = ast.Assignment(g_builder, g_module, p[3], p[4])
+    pass
+
+
 ## Arithmetic:
 def p_sexpr_addition(p):
     'sexpr : LPAREN ADD seq RPAREN'
@@ -81,7 +88,7 @@ def p_conditional_integer(p):
 
 # Printing:
 def p_sexpr_print(p):
-    'sexpr : LPAREN PRINT seq RPAREN'
+    'sexpr : LPAREN PRINT atom RPAREN'
     p[0] = ast.Print(g_builder, g_module, g_printf, p[3])
     pass
 
@@ -142,7 +149,7 @@ def p_atom_STRING(p):
 
 def p_atom_identifier(p):
     'atom : IDENTIFIER'
-    p[0] = p[1]
+    p[0] = ast.Atom(g_builder, g_module, "IDENTIFIER", p[1])
 
     print("ID: ", p[1])
     pass

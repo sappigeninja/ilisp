@@ -18,10 +18,10 @@ def main():
     parser = p.get_parser()
 
     #open text file in read mode
-    file = open("../test/main.il", "r")
-    for line in file:
-        parse = parser.parse(line)
-        print(parse)
+    with open("../test/main.tl", "r") as f:
+        for line in f:
+            parse = parser.parse(line)
+            print(parse)
 
     # Create an LLVM IR code file
     # generate assembly with $ llc output.ll
